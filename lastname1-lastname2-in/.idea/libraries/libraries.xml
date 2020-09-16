@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="libraries">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../lib/intelagent_jars/colt.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/intelagent_jars/commons-math-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/intelagent_jars/jdom.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/intelagent_jars/jsolver.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/intelagent_jars/log4j-1.2.15.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/intelagent_jars/logist.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/intelagent_jars/plot.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/intelagent_jars/repast.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
