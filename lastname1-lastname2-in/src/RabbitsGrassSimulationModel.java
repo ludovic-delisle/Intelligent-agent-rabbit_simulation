@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 public class RabbitsGrassSimulationModel extends SimModelImpl {
 
-	private static final int GRID_SIZE=100;
+	private static final int GRID_SIZE=20;
 	private static final int NUM_INIT_RABBITS = 10;
 	private static final int NUM_INIT_GRASS=1000;
 	private static final int GRASS_GROWTH_RATE = 15;
@@ -191,7 +191,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 
 		amountOfGrassInSpace.addSequence("# squares filed with grass ", new GrassInSpace());
 		amountOfGrassInSpace.addSequence("# of rabbits in space", new AgentsInSpace());
-		amountOfGrassInSpace.addSequence("Grass grow rate", new GrassGrowRate());
+		
 
 	}
 
