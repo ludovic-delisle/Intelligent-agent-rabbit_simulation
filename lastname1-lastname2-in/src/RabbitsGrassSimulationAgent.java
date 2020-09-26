@@ -21,12 +21,15 @@ public class RabbitsGrassSimulationAgent implements Drawable {
 	private int vx;
 	private int vy;
 	private int life;
+	private int grassEnergy;
+	private int rabbitEnergyConsumption;
 	private RabbitsGrassSimulationSpace space;
 
-	public RabbitsGrassSimulationAgent(int birth_life){
+	public RabbitsGrassSimulationAgent(int birth_life, int nutrition_from_grass, int rabbitEnergyConsumption){
 		set_speed(); // set random directions
 		life = birth_life;
-
+		grassEnergy=nutrition_from_grass;
+		this.rabbitEnergyConsumption=rabbitEnergyConsumption;
 	}
 	private void set_speed(){
 
@@ -52,18 +55,20 @@ public class RabbitsGrassSimulationAgent implements Drawable {
 	}
 
 	public void draw(SimGraphics arg0) {
-		float value = 1;
-
-
-		Color color = new Color((float) 1.0, value, (float) 0.0);
-
-
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File("rabbit.jpg"));
-		} catch (IOException e) {
+		int fcolor=250;
+		if(life<50){
+			 fcolor=100;
 		}
-
+		else if(life<100){
+			 fcolor=150;
+		}
+		else if(life<150){
+			 fcolor=200;
+		}
+		else if(life<200){
+			 fcolor=220;
+		}
+		Color color = new Color(fcolor, fcolor, fcolor);
 
 		arg0.drawFastCircle(color);
 		
@@ -77,9 +82,10 @@ public class RabbitsGrassSimulationAgent implements Drawable {
 	}
 
 	public void try_to_eat() {
-		if (space.get_grass_at(x, y)){
+		if (space.get_grass_at(x, y)>0){
+
+			life += grassEnergy*space.get_grass_at(x, y);
 			space.grass_eaten(x,y);
-			life += 10;
 		}
 	}
 
@@ -128,7 +134,7 @@ public class RabbitsGrassSimulationAgent implements Drawable {
 		}
 
 
-		life-=1;
+		life-=rabbitEnergyConsumption;
 	}
 
 }

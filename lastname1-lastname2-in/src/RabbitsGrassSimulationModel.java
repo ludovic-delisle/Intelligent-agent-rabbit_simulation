@@ -29,17 +29,27 @@ import java.util.ArrayList;
 
 public class RabbitsGrassSimulationModel extends SimModelImpl {
 
-	private static final int GRID_SIZE=20;
+	private static final int GRID_SIZE=50;
 	private static final int NUM_INIT_RABBITS = 10;
 	private static final int NUM_INIT_GRASS=1000;
-	private static final int GRASS_GROWTH_RATE = 15;
+	private static final int GRASS_GROWTH_RATE = 500;
 	private static final int BIRTH_THRESHOLD = 300;
+	private static final int GRASS_BASE_ENERGY = 3;
+	private static final int LIFE_AT_BIRTH = 150;
+	private static final int BABY_DELIVERY_ENERGY = 150;
+	private static final int MAXIMAL_GRASS_STACKING = 3;
+	private static final int RABBIT_ENERGY_CONSUMPTION = 3;
 
 	private int gridSize = GRID_SIZE;
 	private int numInitRabbits = NUM_INIT_RABBITS;
 	private int numInitGrass = NUM_INIT_GRASS;
 	private int grassGrowthRate = GRASS_GROWTH_RATE;
 	private int birthThreshold = BIRTH_THRESHOLD;
+	private int grassEnergy = GRASS_BASE_ENERGY;
+	private int lifeAtBirth = LIFE_AT_BIRTH;
+	private int babyDeliveryEnergy = BABY_DELIVERY_ENERGY;
+	private int maxGrassStack = MAXIMAL_GRASS_STACKING;
+	private int rabbitEnergyConsumption = RABBIT_ENERGY_CONSUMPTION;
 
 
 
@@ -74,18 +84,6 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		}
 	}
 
-	class GrassGrowRate implements DataSource, Sequence {
-
-		public Object execute() {
-			return new Double(getSValue());
-		}
-
-		public double getSValue() {
-			return (double) grassGrowthRate;
-		}
-	}
-
-
 	public static void main(String[] args) {
 
 		System.out.println("Rabbit skeleton");
@@ -111,7 +109,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 
 	public void buildModel(){
 
-		space = new RabbitsGrassSimulationSpace(gridSize);
+		space = new RabbitsGrassSimulationSpace(gridSize, maxGrassStack);
 		space.add_new_grass(numInitGrass);
 
 			for(int i = 0; i < numInitRabbits; i++){
@@ -158,14 +156,6 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 
 		schedule.scheduleActionAtInterval(1, new CarryDropUpdateGrassInSpace());
 
-
-		class CarryDropUpdateAgentWealth extends BasicAction {
-			public void execute(){
-				if (!rabbit_list.isEmpty()) {
-					agentWealthDistribution.step();
-				}
-			}
-		}
 	}
 
 	public void buildDisplay(){
@@ -199,7 +189,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		// TODO Auto-generated method stub
 		// Parameters to be set by users via the Repast UI slider bar
 		// Do "not" modify the parameters names provided in the skeleton code, you can add more if you want
-		String[] params = { "GridSize", "NumInitRabbits", "NumInitGrass", "GrassGrowthRate", "BirthThreshold"};
+		String[] params = { "GridSize", "NumInitRabbits", "NumInitGrass", "GrassGrowthRate", "BirthThreshold", "GrassEnergy", "LifeAtBirth", "BabyDeliveryEnergy", "MaxGrassStack"};
 		return params;
 	}
 
@@ -207,7 +197,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		int n_x = (int) (Math.random() * (gridSize));
 		int n_y = (int) (Math.random() * (gridSize));
 		if(!space.get_rabbit_at(n_x, n_y)) {
-			RabbitsGrassSimulationAgent new_rabbit = new RabbitsGrassSimulationAgent(50);
+			RabbitsGrassSimulationAgent new_rabbit = new RabbitsGrassSimulationAgent(lifeAtBirth, grassEnergy, rabbitEnergyConsumption);
 			space.add_new_rabbit(new_rabbit, n_x, n_y);
 			rabbit_list.add(new_rabbit);
 
@@ -238,21 +228,26 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		}
 		amountOfGrassInSpace = null;
 
-		if (agentWealthDistribution != null){
-			agentWealthDistribution.dispose();
-		}
-		agentWealthDistribution = null;
 
-		RangePropertyDescriptor b = new RangePropertyDescriptor("GridSize", 0, 200, 100);
+
+		RangePropertyDescriptor b = new RangePropertyDescriptor("GridSize", 0, 200, gridSize);
 		descriptors.put("GridSize", b);
-		RangePropertyDescriptor a = new RangePropertyDescriptor("NumInitRabbits", 0, 1000, 200);
+		RangePropertyDescriptor a = new RangePropertyDescriptor("NumInitRabbits", 0, 100, numInitRabbits);
 		descriptors.put("NumInitRabbits", a);
-		RangePropertyDescriptor d = new RangePropertyDescriptor("NumInitGrass", 0, 40000, 20000);
+		RangePropertyDescriptor d = new RangePropertyDescriptor("NumInitGrass", 0, 5000, numInitGrass);
 		descriptors.put("NumInitGrass", d);
-		RangePropertyDescriptor h = new RangePropertyDescriptor("GrassGrowthRate", 0, 1000, 500);
+		RangePropertyDescriptor h = new RangePropertyDescriptor("GrassGrowthRate", 0, 1000, grassGrowthRate);
 		descriptors.put("GrassGrowthRate", h);
-		RangePropertyDescriptor e = new RangePropertyDescriptor("BirthThreshold", 0, 100, 20);
+		RangePropertyDescriptor e = new RangePropertyDescriptor("BirthThreshold", 0, 1200, birthThreshold);
 		descriptors.put("BirthThreshold", e);
+		RangePropertyDescriptor f = new RangePropertyDescriptor("GrassEnergy", 0, 21, grassEnergy);
+		descriptors.put("GrassEnergy", f);
+		RangePropertyDescriptor g = new RangePropertyDescriptor("LifeAtBirth", 0, 300, lifeAtBirth);
+		descriptors.put("LifeAtBirth", g);
+		RangePropertyDescriptor i = new RangePropertyDescriptor("BabyDeliveryEnergy", 0, 300, babyDeliveryEnergy);
+		descriptors.put("BabyDeliveryEnergy", i);
+		RangePropertyDescriptor j = new RangePropertyDescriptor("MaxGrassStack", 1, 10, maxGrassStack);
+		descriptors.put("MaxGrassStack", j);
 
 
 
@@ -279,14 +274,15 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 
 	private void give_birth_or_die(){
 		for(int i = (rabbit_list.size() - 1); i >= 0 ; i--){
-			RabbitsGrassSimulationAgent rabbit = (RabbitsGrassSimulationAgent) rabbit_list.get(i);
+			RabbitsGrassSimulationAgent rabbit =  rabbit_list.get(i);
 			if(rabbit.get_life() > birthThreshold){
 				add_rabbit();
+				rabbit.decrease_life(babyDeliveryEnergy);
 			}
 		}
 		for(int i = (rabbit_list.size() - 1); i >= 0 ; i--){
-			RabbitsGrassSimulationAgent rabbit = (RabbitsGrassSimulationAgent) rabbit_list.get(i);
-			if(rabbit.get_life() < 0){
+			RabbitsGrassSimulationAgent rabbit = rabbit_list.get(i);
+			if(rabbit.get_life() <= 0){
 				space.remove_rabbit_at(rabbit.getX(), rabbit.getY());
 				rabbit_list.remove(i);
 			}
@@ -331,8 +327,35 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		numInitGrass = grass_init;
 	}
 
+	public int getGrassEnergy(){
+		return grassEnergy;
+	}
 
+	public void setGrassEnergy(int grass_en){
+		grassEnergy=grass_en;
+	}
 
+	public int getLifeAtBirth() {
+		return lifeAtBirth;
+	}
 
+	public void setLifeAtBirth(int lifeAtBirth) {
+		this.lifeAtBirth = lifeAtBirth;
+	}
 
+	public  int getBabyDeliveryEnergy() {
+		return babyDeliveryEnergy;
+	}
+
+	public void setBabyDeliveryEnergy(int babyDeliveryEnergy) {
+		this.babyDeliveryEnergy = babyDeliveryEnergy;
+	}
+
+	public int getMaxGrassStack() {
+		return maxGrassStack;
+	}
+
+	public void setMaxGrassStack(int maxGrassStack) {
+		this.maxGrassStack = maxGrassStack;
+	}
 }
