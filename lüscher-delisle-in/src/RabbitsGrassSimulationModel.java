@@ -65,7 +65,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 	class GrassInSpace implements DataSource, Sequence {
 
 		public Object execute() {
-			return new Double(getSValue());
+			return getSValue();
 		}
 
 		public double getSValue() {
@@ -76,7 +76,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 	class AgentsInSpace implements DataSource, Sequence {
 
 		public Object execute() {
-			return new Double(getSValue());
+			return getSValue();
 		}
 
 		public double getSValue() {
@@ -128,9 +128,8 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 				space.add_new_grass(grassGrowthRate);
 
 				SimUtilities.shuffle(rabbit_list);
-				for(int i = 0; i < rabbit_list.size(); i++){
-					RabbitsGrassSimulationAgent rabbit = (RabbitsGrassSimulationAgent) rabbit_list.get(i);
-					rabbit.step();
+				for (RabbitsGrassSimulationAgent rabbitsGrassSimulationAgent : rabbit_list) {
+					((RabbitsGrassSimulationAgent) rabbitsGrassSimulationAgent).step();
 				}
 
 				give_birth_or_die();
@@ -179,8 +178,8 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		displaySurf.addDisplayableProbeable(displayGrass, "Grass");
 		displaySurf.addDisplayableProbeable(displayAgents, "Agents");
 
-		amountOfGrassInSpace.addSequence("# squares filed with grass ", new GrassInSpace());
-		amountOfGrassInSpace.addSequence("# of rabbits in space", new AgentsInSpace());
+		amountOfGrassInSpace.addSequence("#grass ", new GrassInSpace());
+		amountOfGrassInSpace.addSequence("#rabbits", new AgentsInSpace());
 		
 
 	}
@@ -254,7 +253,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		displaySurf = new DisplaySurface(this, "Carry Drop Model Window 1");
 
 
-		amountOfGrassInSpace = new OpenSequenceGraph("Amount Of Grass In Space",this);
+		amountOfGrassInSpace = new OpenSequenceGraph("Population Evolution",this);
 
 		// Register Displays
 		registerDisplaySurface("Carry Drop Model Window 1", displaySurf);
