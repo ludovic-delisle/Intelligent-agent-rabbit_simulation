@@ -217,7 +217,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		rabbit_list = new ArrayList<RabbitsGrassSimulationAgent>();
 		schedule = new Schedule(1);
 
-
+		//tear down and displays
 		if (displaySurf != null){
 			displaySurf.dispose();
 		}
@@ -229,7 +229,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		amountOfGrassInSpace = null;
 
 
-
+		//creates a sliders which has to be ints.
 		RangePropertyDescriptor b = new RangePropertyDescriptor("GridSize", 0, 200, gridSize);
 		descriptors.put("GridSize", b);
 		RangePropertyDescriptor a = new RangePropertyDescriptor("NumInitRabbits", 0, 100, numInitRabbits);
@@ -250,17 +250,19 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		descriptors.put("MaxGrassStack", j);
 
 
-
+		// Create Displays
 		displaySurf = new DisplaySurface(this, "Carry Drop Model Window 1");
 
 
 		amountOfGrassInSpace = new OpenSequenceGraph("Amount Of Grass In Space",this);
 
+		// Register Displays
 		registerDisplaySurface("Carry Drop Model Window 1", displaySurf);
 		this.registerMediaProducer("Plot", amountOfGrassInSpace);
 
 	}
 
+	//returns and prints number of rabbits in space
 	private int count_rabbits(){
 		int rabbit_nbr = 0;
 		for(int i = 0; i < rabbit_list.size(); i++){
@@ -272,6 +274,13 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		return rabbit_nbr;
 	}
 
+	/**
+	 * For each rabbit in the simulation, looks at its energy and decides
+	 * what to do with it:
+	 * 1) Rabbit energy is over the birth threshold and thus said rabbit gives birth and looses some energy
+	 * 2) Rabbit energy is non positive and thus the rabbit is removed from simulation
+	 * 3) Rabbit energy is greater than 0 but less than the birth threshold, nothing happens
+	 */
 	private void give_birth_or_die(){
 		for(int i = (rabbit_list.size() - 1); i >= 0 ; i--){
 			RabbitsGrassSimulationAgent rabbit =  rabbit_list.get(i);

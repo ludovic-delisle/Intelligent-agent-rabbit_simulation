@@ -31,6 +31,11 @@ public class RabbitsGrassSimulationAgent implements Drawable {
 		grassEnergy=nutrition_from_grass;
 		this.rabbitEnergyConsumption=rabbitEnergyConsumption;
 	}
+
+	/**
+	 * sets the speed of the rabbit so that it will randomly move to a spot next to him.
+	 * rabbits cannot move diagonally and thus can only move in 1 direction at once (x or y)
+	 */
 	private void set_speed(){
 
 		vx=0;
@@ -54,6 +59,11 @@ public class RabbitsGrassSimulationAgent implements Drawable {
 		}
 	}
 
+	/**
+	 * returns a colored circle to be drawn by uchicago.src.sim.gui.Drawable
+	 * While white at full energy, the less energy the rabbit has, the darker its color will be
+	 * @param arg0 the graphic simulation where we want to draw our rabbits
+	 */
 	public void draw(SimGraphics arg0) {
 		int fcolor=250;
 		if(life<50){
@@ -73,14 +83,23 @@ public class RabbitsGrassSimulationAgent implements Drawable {
 		arg0.drawFastCircle(color);
 		
 	}
+	//returns the energy of the rabbit
 	public int get_life(){
 		return life;
 	}
 
+	/**
+	 * decrease the energy of the rabbit by the amount of the given parameter
+	 * @param life_taken energy to take away from the rabbit
+	 */
 	public void decrease_life(int life_taken){
 		life -= life_taken;
 	}
 
+	/**
+	 * Looks at the spot where the rabbit is to see if there's a plant.
+	 * If there is a plant, the rabbit eats it and retrieve its energy, the plant disappears.
+	 */
 	public void try_to_eat() {
 		if (space.get_grass_at(x, y)>0){
 
@@ -97,10 +116,20 @@ public class RabbitsGrassSimulationAgent implements Drawable {
 
 	public void set_y(int new_y) { this.y=new_y; }
 
+	/**
+	 * Sets the simulation space
+	 * @param rabbit_space simulation space of this rabbit
+	 */
 	public void set_space(RabbitsGrassSimulationSpace rabbit_space){
 		space = rabbit_space;
 	}
 
+	/**
+	 * gives the actions that the rabbit does at each simulation step
+	 * 1) calculate a new position on the grid and check that there is no other rabbit at that position before moving
+	 * 2) tries to eat
+	 * 3) looses some energy
+	 */
 	public void step(){
 
 		set_speed();
@@ -130,9 +159,8 @@ public class RabbitsGrassSimulationAgent implements Drawable {
 			space.move_rabbit_to(x, y, new_x, new_y);
 			set_x(new_x);
 			set_y(new_y);
-			try_to_eat();
 		}
-
+		try_to_eat();
 
 		life-=rabbitEnergyConsumption;
 	}
