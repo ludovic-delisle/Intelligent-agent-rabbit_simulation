@@ -37,7 +37,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 	private static final int GRASS_BASE_ENERGY = 3;
 	private static final int LIFE_AT_BIRTH = 150;
 	private static final int BABY_DELIVERY_ENERGY = 150;
-	private static final int MAXIMAL_GRASS_STACKING = 3;
+	private static final int MAXIMAL_GRASS_STACKING = 8;
 	private static final int RABBIT_ENERGY_CONSUMPTION = 3;
 
 	private int gridSize = GRID_SIZE;
@@ -65,7 +65,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 	class GrassInSpace implements DataSource, Sequence {
 
 		public Object execute() {
-			return new Double(getSValue());
+			return getSValue();
 		}
 
 		public double getSValue() {
@@ -76,7 +76,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 	class AgentsInSpace implements DataSource, Sequence {
 
 		public Object execute() {
-			return new Double(getSValue());
+			return getSValue();
 		}
 
 		public double getSValue() {
@@ -128,9 +128,8 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 				space.add_new_grass(grassGrowthRate);
 
 				SimUtilities.shuffle(rabbit_list);
-				for(int i = 0; i < rabbit_list.size(); i++){
-					RabbitsGrassSimulationAgent rabbit = (RabbitsGrassSimulationAgent) rabbit_list.get(i);
-					rabbit.step();
+				for (RabbitsGrassSimulationAgent rabbitsGrassSimulationAgent : rabbit_list) {
+					((RabbitsGrassSimulationAgent) rabbitsGrassSimulationAgent).step();
 				}
 
 				give_birth_or_die();
@@ -179,8 +178,8 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		displaySurf.addDisplayableProbeable(displayGrass, "Grass");
 		displaySurf.addDisplayableProbeable(displayAgents, "Agents");
 
-		amountOfGrassInSpace.addSequence("# squares filed with grass ", new GrassInSpace());
-		amountOfGrassInSpace.addSequence("# of rabbits in space", new AgentsInSpace());
+		amountOfGrassInSpace.addSequence("#grass ", new GrassInSpace());
+		amountOfGrassInSpace.addSequence("#rabbits", new AgentsInSpace());
 		
 
 	}
@@ -189,7 +188,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		// TODO Auto-generated method stub
 		// Parameters to be set by users via the Repast UI slider bar
 		// Do "not" modify the parameters names provided in the skeleton code, you can add more if you want
-		String[] params = { "GridSize", "NumInitRabbits", "NumInitGrass", "GrassGrowthRate", "BirthThreshold", "GrassEnergy", "LifeAtBirth", "BabyDeliveryEnergy", "MaxGrassStack"};
+		String[] params = { "GridSize", "NumInitRabbits", "NumInitGrass", "GrassGrowthRate", "BirthThreshold", "GrassEnergy", "LifeAtBirth", "BabyDeliveryEnergy"};
 		return params;
 	}
 
@@ -246,15 +245,15 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		descriptors.put("LifeAtBirth", g);
 		RangePropertyDescriptor i = new RangePropertyDescriptor("BabyDeliveryEnergy", 0, 300, babyDeliveryEnergy);
 		descriptors.put("BabyDeliveryEnergy", i);
-		RangePropertyDescriptor j = new RangePropertyDescriptor("MaxGrassStack", 1, 10, maxGrassStack);
-		descriptors.put("MaxGrassStack", j);
+		//RangePropertyDescriptor j = new RangePropertyDescriptor("MaxGrassStack", 1, 10, maxGrassStack);
+		//descriptors.put("MaxGrassStack", j);
 
 
 		// Create Displays
 		displaySurf = new DisplaySurface(this, "Carry Drop Model Window 1");
 
 
-		amountOfGrassInSpace = new OpenSequenceGraph("Amount Of Grass In Space",this);
+		amountOfGrassInSpace = new OpenSequenceGraph("Population Evolution",this);
 
 		// Register Displays
 		registerDisplaySurface("Carry Drop Model Window 1", displaySurf);
