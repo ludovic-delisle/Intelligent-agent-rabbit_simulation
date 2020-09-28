@@ -30,4 +30,7 @@ bin/
 *.settings
 *.project
 *.classpath
+<<<<<<< HEAD
 /.metadata/
+=======
+>>>>>>> e254b2e79236e7c6e4479d95bd87cc6e5993ed99
